@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/user');
 const passport = require('passport');
+
 const authenticate = require('../authenticate');
 const cors = require('./cors');
 
@@ -68,6 +69,16 @@ router.get('/logout', cors.corsWithOptions, (req, res, next) => {
       err.status = 401;
       return next(err);
   }
+});
+
+
+router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
+    if (req.user) {
+        const token = authenticate.getToken({_id: req.user._id});
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json({success: true, token: token, status: 'You are successfully logged in!'});
+    }
 });
 
 
